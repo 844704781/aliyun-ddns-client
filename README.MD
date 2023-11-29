@@ -25,8 +25,18 @@ aliyun.access_key.secret= xxx
 # 获取方式: https://blog.csdn.net/ren991630622/article/details/77174574
 aliyun.access_key.record_id= xxx
 ```
-## 运行项目
+## 测试运行项目
 ```shell
 cd target/
 java -jar aliyun-ddns-client-1.0.jar
+```
+
+## 添加定时任务
+```shell
+# 打开定时任务配置文件
+crontab -e
+# 文件中新增cron表达式，代表一个小时候执行一次命令
+0 * * * * java -jar /home/watermelon/workspace/ddns/aliyun-ddns-client-1.0.jar
+# 验证定时任务
+crontab -l
 ```
