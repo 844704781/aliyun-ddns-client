@@ -1,6 +1,16 @@
-# 阿里云Java版使用教程
+# 阿里云DDNS Java版使用教程
+## 前言
+```text
+可将动态公网IP更新到阿里云域名解析服务器
+```
+## 编译运行环境
+```text
+jdk1.8,maven
+```
 ## 克隆代码
+```shell
 git clone git@github.com:844704781/aliyun-ddns-client.git
+```
 ## 编译
 ```shell
 cd aliyun-ddns-client/
