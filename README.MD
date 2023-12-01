@@ -36,7 +36,7 @@ java -jar aliyun-ddns-client-1.0.jar
 # 打开定时任务配置文件
 crontab -e
 # 文件中新增cron表达式，代表一个小时候执行一次命令
-0 * * * * java -jar /home/watermelon/workspace/ddns/aliyun-ddns-client-1.0.jar
+0 * * * * java -jar /home/watermelon/workspace/ddns/aliyun-ddns-client-1.0.jar > /dev/null 2>&1
 # 验证定时任务
 crontab -l
 ```
