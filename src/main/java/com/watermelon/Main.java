@@ -111,15 +111,16 @@ public class Main {
             log.info("IP address remains unchanged, no need for an update.");
             return;
         }
-        log.info("The new IP address is different from the previous one. Start saving the new IP address.");
 
-        refreshPreviousIpv4(ipv4);
+        log.info("The new IP address is different from the previous one.");
 
         AppConfig appConfig = new AppConfig();
         String accessKeyId = appConfig.getProperty("aliyun.access_key.id");
         String secret = appConfig.getProperty("aliyun.access_key.secret");
         String recordId = appConfig.getProperty("aliyun.access_key.record_id");
         Client client = createClient(accessKeyId, secret);
+
+
         UpdateDomainRecordRequest updateDomainRecordRequest = new UpdateDomainRecordRequest()
                 .setLang("en")
                 .setRecordId(recordId)
@@ -132,6 +133,8 @@ public class Main {
             log.info("Update domain record,waiting...");
             UpdateDomainRecordResponse resp = client.updateDomainRecordWithOptions(updateDomainRecordRequest, runtime);
             log.info("Update success,{}", Common.toJSONString(resp));
+            log.info(" Start saving the new IP address.");
+            refreshPreviousIpv4(ipv4);
         } catch (Exception e) {
             log.info("Update fail,{}", e.getMessage());
         } finally {
