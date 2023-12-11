@@ -109,6 +109,7 @@ public class Main {
             return true;
         } catch (Exception e) {
             if (e.getMessage().contains("already exists")) {
+                log.info("Update success,ipv4 already exists");
                 return true;
             }
             log.info("Update fail,{}", e.getMessage());
