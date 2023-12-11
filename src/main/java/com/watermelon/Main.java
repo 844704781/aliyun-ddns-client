@@ -66,7 +66,7 @@ public class Main {
             return ipv4;
         } catch (IOException e) {
             log.info("Failed to retrieve public IPv4 address. Please try again.");
-            throw new IOException(e);
+            return null;
         }
     }
 
@@ -98,10 +98,36 @@ public class Main {
         }
     }
 
+    private static boolean updateDomain(Client client, UpdateDomainRecordRequest request) {
+        RuntimeOptions runtime = new RuntimeOptions();
+        try {
+            log.info("Update domain record,waiting...");
+            UpdateDomainRecordResponse resp = client.updateDomainRecordWithOptions(request, runtime);
+            log.info("Update success,{}", Common.toJSONString(resp));
+            log.info(" Start saving the new IP address.");
+            refreshPreviousIpv4(request.getValue());
+            return true;
+        } catch (Exception e) {
+            log.info("Update fail,{}", e.getMessage());
+            return false;
+        } finally {
+            log.info("Task end.");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         log.info("Task start.");
         log.info("CURL {} ...", ipify);
-        String ipv4 = retrieveIPV4();
+        String ipv4 = null;
+        int retryCount = 0;
+        while (ipv4 == null || ipv4.trim() == "") {
+            log.info("Retrieve ipv4,the current number of attempts is {},waiting...", retryCount);
+            Thread.sleep(retryCount * 1000);
+            ipv4 = retrieveIPV4();
+            if (ipv4 == null) {
+                retryCount++;
+            }
+        }
         /**
          * 如果ipv4发生改变，则更新
          */
@@ -118,8 +144,10 @@ public class Main {
         String accessKeyId = appConfig.getProperty("aliyun.access_key.id");
         String secret = appConfig.getProperty("aliyun.access_key.secret");
         String recordId = appConfig.getProperty("aliyun.access_key.record_id");
+        log.info("access_key_id:{}", accessKeyId);
+        log.info("secret:{}", secret);
+        log.info("record_id:{}", recordId);
         Client client = createClient(accessKeyId, secret);
-
 
         UpdateDomainRecordRequest updateDomainRecordRequest = new UpdateDomainRecordRequest()
                 .setLang("en")
@@ -127,20 +155,15 @@ public class Main {
                 .setRR("@")
                 .setType("A")
                 .setValue(ipv4);
-
-        RuntimeOptions runtime = new RuntimeOptions();
-        try {
-            log.info("Update domain record,waiting...");
-            UpdateDomainRecordResponse resp = client.updateDomainRecordWithOptions(updateDomainRecordRequest, runtime);
-            log.info("Update success,{}", Common.toJSONString(resp));
-            log.info(" Start saving the new IP address.");
-            refreshPreviousIpv4(ipv4);
-        } catch (Exception e) {
-            log.info("Update fail,{}", e.getMessage());
-        } finally {
-            log.info("Task end.");
+        int i = 0;
+        boolean result = false;
+        while (!result) {
+            log.info("Update domain,the current number of attempts is {},waiting...", i);
+            Thread.sleep(1000 * i);
+            result = updateDomain(client, updateDomainRecordRequest);
+            if (!result) {
+                i++;
+            }
         }
     }
-
-
 }
