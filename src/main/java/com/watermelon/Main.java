@@ -108,6 +108,9 @@ public class Main {
             refreshPreviousIpv4(request.getValue());
             return true;
         } catch (Exception e) {
+            if (e.getMessage().contains("already exists")) {
+                return true;
+            }
             log.info("Update fail,{}", e.getMessage());
             return false;
         } finally {
