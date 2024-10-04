@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    private static final String ipify = "https://api.ipify.org?format=textg?format=text";
+    private static final String ipify = "https://ifconfig.me";
 
     private static final String endpoint = "alidns.cn-hangzhou.aliyuncs.com";
 
